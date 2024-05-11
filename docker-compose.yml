@@ -1,0 +1,41 @@
+version: "3.7"
+
+volumes:
+  storage:
+
+services:
+  adventureland:
+    container_name: adventureland
+    image: adventureland
+    build:
+      context: ./
+      args:
+        admin_email: admin@adventureland.local
+    restart: always
+    ports:
+      - "8083:8083"
+      - "8000:8000"
+    volumes:
+      - storage:/appserver/storage/
+  eu1:
+    container_name: eu1
+    image: adventureland
+    restart: always
+    ports:
+      - "8022:8022"
+    volumes:
+      - storage:/appserver/storage/
+    entrypoint: ["/adventureland/node-entrypoint.sh", "EU", "I", "8022"]
+    depends_on:
+      - adventureland
+  us1:
+    container_name: us1
+    image: adventureland
+    restart: always
+    ports:
+      - "8023:8023"
+    volumes:
+      - storage:/appserver/storage/
+    entrypoint: ["/adventureland/node-entrypoint.sh", "US", "I", "8023"]
+    depends_on:
+      - adventureland
